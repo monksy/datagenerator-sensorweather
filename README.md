@@ -48,11 +48,23 @@ A CSV output will come out of standard out ready to be consumed.
     1525295880523,b,81.94
     1525325880523,b,67.10
 
+
+## SQL Table to import the data into 
+
+Note: The timestamp type will not accept epoch. 
+
+    create table sesnordata
+    (
+      checkintime bigint not null,
+      sensor varchar(10) not null,
+      temperature double precision
+    );
+    
+
 ## Improvements that could be made
 
  * Refactoring for clarity 
  * Injection of occasional bad data (to simulate bad sensors)
  * Configurability to show when a sensor may have failed to report in
- * Creation of SQL DB that fits the schema of the output
  * Better date handling to start at the beginning of the year rather than the current day.
 
