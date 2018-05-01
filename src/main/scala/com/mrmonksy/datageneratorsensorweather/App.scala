@@ -25,6 +25,7 @@ object App {
     val ids = args(0).split(",")
     val seconds = args(1).toInt
     val days = args(2).toInt
+    val totalSecondSectionsInDay = (24 * 60 * 60) / seconds
 
     val rand = new Random()
     val scalarForIds = ids.map(a => (a, rand.nextDouble() * 0.4 + 0.8)).toMap
@@ -42,16 +43,19 @@ object App {
       for (curId <- ids) {
         val idTime = curInstanceDay.clone().asInstanceOf[Calendar]
 
-        val curDayVariation = 50 * scalarForIds(curId) * Math.cos(idTime.get(Calendar.DAY_OF_YEAR) * 2* Math.PI / 365.0+ Math.PI) + 50
-        val totalSecondSectionsInDay = (24 * 60 * 60) / seconds
+        val curDayVariation = cos(50 * scalarForIds(curId), idTime.get(Calendar.DAY_OF_YEAR) / 365.0, Math.PI, 50)
         for (secondOfDay <- 0 to totalSecondSectionsInDay) {
           idTime.add(Calendar.SECOND, seconds)
-          val intraDayVariance = dayTolerences(curId) * Math.cos(secondOfDay * 2*Math.PI / totalSecondSectionsInDay+ Math.PI)
+          val intraDayVariance = cos(dayTolerences(curId), secondOfDay / totalSecondSectionsInDay.toDouble, Math.PI, 0)
           val temperature = intraDayVariance + curDayVariation
           println(f"${idTime.getTimeInMillis},$curId,$temperature%1.2f")
         }
       }
     }
+  }
+
+  def cos(scalar: Double, angularFraction: Double, angleOffSet: Double, offSet: Double): Double = {
+    scalar * Math.cos(angularFraction * 2 * Math.PI + angleOffSet) + offSet
   }
 
   def dailyDeviation(ids: Array[String]): Map[String, Double] = {
